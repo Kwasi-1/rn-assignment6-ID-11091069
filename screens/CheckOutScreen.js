@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
   },
   subContainer: {
     padding: 16,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 16,
-    textTransform: 'capitalize',
+    textTransform: 'uppercase',
   },
   description: {
     fontSize: 14,

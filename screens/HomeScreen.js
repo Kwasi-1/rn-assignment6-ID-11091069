@@ -47,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
         </Pressable>
       </View>
       <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.description}>{item.description}</Text>
+      <Text style={styles.description}>reversible angora cardigan</Text>
       <Text style={styles.price}>${item.price}</Text>
     </View>
   );
@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
   subHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20,
   },
   subHeaderIcons:{
     flexDirection: 'row',
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
   productContainer: {
     flex: 1,
     margin: 8,
+    marginBottom: 15,
     position: 'relative',
   },
   image: {
