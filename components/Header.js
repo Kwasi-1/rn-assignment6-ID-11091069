@@ -1,16 +1,17 @@
+import React from 'react';
 import { View, Pressable, Image, StyleSheet } from 'react-native';
 
-const Header = () => {
+const Header = ({ navigation, cart }) => {
   return (  
     <View style={styles.header}>
-      <Pressable>
+      <Pressable onPress={() => navigation.openDrawer()}>
         <Image source={require('../assets/Menu.png')} style={styles.icon} resizeMode="contain" />
       </Pressable>
-      <Image source={require('../assets/Logo.png')} style={styles.logo} resizeMode="contain" />
+      <Pressable onPress={() => navigation.goBack()}>
+        <Image source={require('../assets/Logo.png')} style={styles.logo} resizeMode="contain" />
+      </Pressable>
       <View style={styles.headerRight}>
-        <Pressable>
-          <Image source={require('../assets/Search.png')} style={styles.icon} resizeMode="contain" />
-        </Pressable>
+        <Image source={require('../assets/Search.png')} style={styles.icon} resizeMode="contain" />
         <Pressable onPress={() => navigation.navigate('Checkout', { cart })}>
           <Image source={require('../assets/shoppingBag.png')} style={styles.icon} resizeMode="contain" />
         </Pressable>
@@ -39,5 +40,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
- 
+
 export default Header;

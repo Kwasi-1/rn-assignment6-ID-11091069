@@ -36,8 +36,8 @@ const CheckoutScreen = ({ route, navigation }) => {
       <View style={styles.productContainer}>
         <Image source={item.image} style={styles.image} />
         <View style={styles.productDetails}>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.description}>{item.description}</Text>
+          <Text style={styles.productName}>{item.title}</Text>
+          <Text style={styles.description} numberOfLines={3}>{item.description}</Text>
           <Text style={styles.price}>${item.price}</Text>
         </View>
       </View>
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // textTransform: 'uppercase',
   },
   subContainer: {
     padding: 16,

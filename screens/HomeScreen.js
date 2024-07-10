@@ -1,23 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, Image, Pressable, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, FlatList, Image, Pressable, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { v4 as uuidv4 } from 'uuid';
 import { useFocusEffect } from '@react-navigation/native';
 import 'react-native-get-random-values';
-
-const products = [
-  { id: '1', name: 'Office Wear', price: 120, image: require('../assets/dress1.png'), description: 'Office wear for you office' },
-  { id: '2', name: 'Black', price: 120, image: require('../assets/dress2.png'), description: 'Stylish black dress' },
-  { id: '3', name: 'Church Wear', price: 120, image: require('../assets/dress3.png'), description: 'Perfect for church' },
-  { id: '4', name: 'Lamerei', price: 120, image: require('../assets/dress4.png'), description: 'Recycle Boucle Knit Cardigan Pink' },
-  { id: '5', name: '21WLN', price: 120, image: require('../assets/dress5.png'), description: 'Classic white dress' },
-  { id: '6', name: 'Lopo', price: 120, image: require('../assets/dress6.png'), description: 'Elegant lopo dress' },
-  { id: '7', name: '21WLN', price: 120, image: require('../assets/dress1.png'), description: 'Classic white dress' },
-  { id: '8', name: 'Lame', price: 120, image: require('../assets/dress7.png'), description: 'Elegant lame dress' },
-];
+import Header from '../components/Header';
+import Icons from 'react-native-vector-icons/FontAwesome5';
 
 const HomeScreen = ({ navigation }) => {
   const [cart, setCart] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -27,7 +19,19 @@ const HomeScreen = ({ navigation }) => {
           setCart(JSON.parse(storedCart));
         }
       };
+
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch("https://fakestoreapi.com/products");
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       loadCart();
+      fetchProducts();
     }, [])
   );
 
@@ -40,35 +44,25 @@ const HomeScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.productContainer}>
-      <View>
-        <Image source={item.image} style={styles.image} resizeMode="contain" />
-        <Pressable style={styles.addButton} onPress={() => addToCart(item)}>
-          <Image source={require('../assets/add_circle.png')} style={styles.icon} resizeMode="contain" />
-        </Pressable>
-      </View>
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.description}>reversible angora cardigan</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { item })}>
+        <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
+        <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
+          <View style={styles.iconContainer}>
+            <Icons name="plus" size={12} color="#fff" />
+          </View>        
+        </TouchableOpacity>
+      </TouchableOpacity>
+      <Text style={styles.productName}>{item.title}</Text>
+      <Text style={styles.description} numberOfLines={3}>{item.description}</Text>
       <Text style={styles.price}>${item.price}</Text>
+      
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={"light-content"} backgroundColor= '#fff' />
-      <View style={styles.header}>
-        <Pressable>
-          <Image source={require('../assets/Menu.png')} style={styles.icon} resizeMode="contain" />
-        </Pressable>
-        <Image source={require('../assets/Logo.png')} style={styles.logo} resizeMode="contain" />
-        <View style={styles.headerRight}>
-          <Pressable>
-            <Image source={require('../assets/Search.png')} style={styles.icon} resizeMode="contain" />
-          </Pressable>
-          <Pressable onPress={() => navigation.navigate('Checkout', { cart })}>
-            <Image source={require('../assets/shoppingBag.png')} style={styles.icon} resizeMode="contain" />
-          </Pressable>
-        </View>
-      </View>
+      <StatusBar barStyle={"light-content"} backgroundColor='#fff' />
+      <Header navigation={navigation} cart={cart} />
       <View style={styles.subHeader}>
         <Image source={require('../assets/our-story.png')} style={styles.logo} resizeMode="contain" />
         <View style={styles.subHeaderIcons}>
@@ -97,31 +91,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  logo: {
-    width: 180,
-    height: 40,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginHorizontal: 10,
-  },
-  headerRight: {
-    flexDirection: 'row',
-  },
   subHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
-  subHeaderIcons:{
+  subHeaderIcons: {
     flexDirection: 'row',
   },
   subHeaderIcon: {
@@ -129,6 +105,10 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 6,
     backgroundColor: '#eee'
+  },
+  logo: {
+    width: 180,
+    height: 40,
   },
   subIcon: {
     width: 24,
@@ -157,8 +137,15 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 0,
   },
+  iconContainer: {
+    backgroundColor: '#000',
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    borderRadius: 14, 
+  },
   productName: {
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '600',
     marginTop: 10,
   },
   description: {
@@ -166,8 +153,9 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   price: {
-    fontSize: 16,
-    color: '#000',
+    fontFamily: 'Helvetica Neue',
+    fontSize: 20,
+    color: '#dd8661',
     marginTop: 5,
   },
   button: {
